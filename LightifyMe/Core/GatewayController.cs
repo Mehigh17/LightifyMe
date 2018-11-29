@@ -115,6 +115,8 @@ namespace LightifyMe.Core
 
             _socket.Send(requestBuffer.ToArray());
             _socket.Receive(responseBuffer);
+
+            bulb.IsOn = true;
         }
 
         public void TurnOff(Bulb bulb)
@@ -132,6 +134,8 @@ namespace LightifyMe.Core
 
             _socket.Send(requestBuffer.ToArray());
             _socket.Receive(responseBuffer);
+
+            bulb.IsOn = false;
         }
 
         #endregion
