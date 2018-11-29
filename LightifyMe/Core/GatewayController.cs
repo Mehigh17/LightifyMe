@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using LightifyMe.Core.Builders;
@@ -18,6 +19,8 @@ namespace LightifyMe.Core
 
         private readonly Socket _socket;
         private readonly IBulbBuilder _bulbBuilder;
+
+        private int _sessionId = 0;
 
         public GatewayController(IBulbBuilder bulbBuilder)
         {
@@ -94,6 +97,40 @@ namespace LightifyMe.Core
             var responseBuffer = new byte[ResponseBufferSize];
 
             _socket.Send(requestBuffer);
+            _socket.Receive(responseBuffer);
+        }
+
+        public void TurnOn(Bulb bulb)
+        {
+            var responseBuffer = new byte[ResponseBufferSize];
+
+            _sessionId++;
+            var requestBuffer = new List<byte>
+            {
+                0x0F, 0x00, 0x00, 0x32
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
+            requestBuffer.AddRange(BitConverter.GetBytes(bulb.MacAddress));
+            requestBuffer.Add(0x01);
+
+            _socket.Send(requestBuffer.ToArray());
+            _socket.Receive(responseBuffer);
+        }
+
+        public void TurnOff(Bulb bulb)
+        {
+            var responseBuffer = new byte[ResponseBufferSize];
+
+            _sessionId++;
+            var requestBuffer = new List<byte>
+            {
+                0x0F, 0x00, 0x00, 0x32
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
+            requestBuffer.AddRange(BitConverter.GetBytes(bulb.MacAddress));
+            requestBuffer.Add(0x00);
+
+            _socket.Send(requestBuffer.ToArray());
             _socket.Receive(responseBuffer);
         }
 
