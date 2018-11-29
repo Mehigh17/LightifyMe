@@ -15,7 +15,7 @@ namespace LightifyMe.Core.Builders
             _bytes = new List<byte>();
         }
 
-        public IBulbBuilder AddBytes(IEnumerable<byte> bytes)
+        public IBulbBuilder AddBytes(byte[] bytes)
         {
             _bytes.AddRange(bytes);
             return this;

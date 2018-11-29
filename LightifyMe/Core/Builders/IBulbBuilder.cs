@@ -5,7 +5,7 @@ namespace LightifyMe.Core.Builders
     public interface IBulbBuilder
     {
 
-        IBulbBuilder AddBytes(IEnumerable<byte> bytes);
+        IBulbBuilder AddBytes(byte[] bytes);
         Bulb Build();
 
     }
