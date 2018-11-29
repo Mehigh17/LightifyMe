@@ -1,13 +1,11 @@
-﻿using System;
+﻿using LightifyMe.Core.Builders;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
-using LightifyMe.Core.Builders;
 
 namespace LightifyMe.Core
 {
@@ -159,6 +157,26 @@ namespace LightifyMe.Core
             _socket.Receive(responseBuffer);
 
             bulb.Brightness = brightnessPercentage;
+        }
+
+        public void SetColor(Bulb bulb, Color color)
+        {
+            var responseBuffer = new byte[ResponseBufferSize];
+
+            _sessionId++;
+            var requestBuffer = new List<byte>
+            {
+                0x14, 0x00, 0x00, 0x36
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
+            requestBuffer.AddRange(BitConverter.GetBytes(bulb.MacAddress));
+            requestBuffer.AddRange(new[] {color.R, color.G, color.B, color.A});
+            requestBuffer.AddRange(new byte[] { 0x0, 0x0 });
+
+            _socket.Send(requestBuffer.ToArray());
+            _socket.Receive(responseBuffer);
+
+            bulb.Color = color;
         }
 
         #endregion
