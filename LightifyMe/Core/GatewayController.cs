@@ -138,6 +138,29 @@ namespace LightifyMe.Core
             bulb.IsOn = false;
         }
 
+        public void SetBrightness(Bulb bulb, byte brightnessPercentage)
+        {
+            if(brightnessPercentage > 100)
+                throw new InvalidOperationException("The bulb brightness percentage can not be smaller than 0 or greater than 100.");
+
+            var responseBuffer = new byte[ResponseBufferSize];
+
+            _sessionId++;
+            var requestBuffer = new List<byte>
+            {
+                0x11, 0x00, 0x00, 0x31
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
+            requestBuffer.AddRange(BitConverter.GetBytes(bulb.MacAddress));
+            requestBuffer.Add(brightnessPercentage);
+            requestBuffer.AddRange(new byte[] {0x0, 0x0});
+
+            _socket.Send(requestBuffer.ToArray());
+            _socket.Receive(responseBuffer);
+
+            bulb.Brightness = brightnessPercentage;
+        }
+
         #endregion
 
     }
