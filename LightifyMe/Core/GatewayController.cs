@@ -56,18 +56,46 @@ namespace LightifyMe.Core
                 throw new InvalidOperationException("The controller must be connected to the gateway.");
 
             var bulbs = new List<Bulb>();
-            var receivedBuffer = new byte[RequestBufferHeaderSize + BulbBufferSize]; // TODO: Support more than 1 bulb per gateway
+            var receivedHeader = new byte[RequestBufferHeaderSize];
 
-            var requestBuffer = new byte[]
-                {0x0B, 0x00, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00};
-            _socket.Send(requestBuffer);
+            // Build the first request buffer to know how many bulbs are connected
+            var requestBuffer = new List<byte>
+            {
+                0x0B, 0x00, 0x00, 0x13,
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
+            requestBuffer.AddRange(new byte[] {0x01, 0x00, 0x00, 0x00, 0x00});
+
+            _socket.Send(requestBuffer.ToArray());
+            _socket.Receive(receivedHeader);
+
+            var bulbCount = receivedHeader[9];
+            var receivedBuffer = new byte[bulbCount * BulbBufferSize]; // Create the bulb data buffer
+
+            // Build the second request buffer which is going to request all the bulb information
+            requestBuffer.Clear();
+            requestBuffer = new List<byte>
+            {
+                0x0B, 0x00, 0x00, 0x13,
+            };
+            requestBuffer.AddRange(BitConverter.GetBytes(++_sessionId));
+            requestBuffer.AddRange(new byte[] {0x01, 0x00, 0x00, 0x00, 0x00});
+            
+            _socket.Send(requestBuffer.ToArray());
             _socket.Receive(receivedBuffer);
 
-            var bulb = _bulbBuilder
-                .AddBytes(receivedBuffer.Skip(RequestBufferHeaderSize).Take(BulbBufferSize).ToArray())
-                .Build();
+            for (var i = 0; i < bulbCount; i++)
+            {
+                var bulbData = receivedBuffer.Skip(BulbBufferSize * i).Take(BulbBufferSize)
+                    .ToArray();
 
-            bulbs.Add(bulb);
+                var bulb = _bulbBuilder
+                    .AddBytes(bulbData)
+                    .Build();
+
+                if(bulb != null)
+                    bulbs.Add(bulb);
+            }
 
             return bulbs;
         }
