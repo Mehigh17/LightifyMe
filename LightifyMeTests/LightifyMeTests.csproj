@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LightifyMe\LightifyMe.csproj" />
+    <ProjectReference Include="..\LightifyMeCore\LightifyMeCore.csproj" />
   </ItemGroup>
 
 </Project>

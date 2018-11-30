@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 
-namespace LightifyMe.Core
+namespace LightifyMeCore
 {
     public class Bulb
     {

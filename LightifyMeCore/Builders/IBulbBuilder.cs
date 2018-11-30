@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace LightifyMe.Core.Builders
+﻿namespace LightifyMeCore.Builders
 {
     public interface IBulbBuilder
     {

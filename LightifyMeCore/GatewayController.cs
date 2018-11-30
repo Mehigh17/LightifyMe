@@ -1,13 +1,13 @@
-﻿using LightifyMe.Core.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using LightifyMeCore.Builders;
 
-namespace LightifyMe.Core
+namespace LightifyMeCore
 {
     public class GatewayController
     {
@@ -198,7 +198,7 @@ namespace LightifyMe.Core
             };
             requestBuffer.AddRange(BitConverter.GetBytes(_sessionId));
             requestBuffer.AddRange(BitConverter.GetBytes(bulb.MacAddress));
-            requestBuffer.AddRange(new[] {color.R, color.G, color.B, color.A});
+            requestBuffer.AddRange(new[] {color.A, color.B, color.G, color.R});
             requestBuffer.AddRange(new byte[] { 0x0, 0x0 });
 
             _socket.Send(requestBuffer.ToArray());
