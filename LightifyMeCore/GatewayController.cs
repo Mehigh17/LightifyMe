@@ -1,13 +1,13 @@
-﻿using LightifyMe.Core.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using LightifyMeCore.Builders;
 
-namespace LightifyMe.Core
+namespace LightifyMeCore
 {
     public class GatewayController
     {
