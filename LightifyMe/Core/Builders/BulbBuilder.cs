@@ -41,6 +41,9 @@ namespace LightifyMe.Core.Builders
 
             _bytes.Clear();
 
+            if (bulb.MacAddress == 0) // There's clearly something wrong if the mac address is equal to 0
+                return null;
+
             return bulb;
         }
     }
